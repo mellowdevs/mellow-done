@@ -6,11 +6,14 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/mellowdevs/mellow-done/config"
 	"github.com/mellowdevs/mellow-done/routes"
 )
 
 func main() {
 	godotenv.Load()
+
+	config.ConnectDB()
 
 	host, ok_host := os.LookupEnv("HOST")
 	port, ok_port := os.LookupEnv("PORT")
