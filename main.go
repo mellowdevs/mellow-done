@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -13,17 +14,20 @@ import (
 func main() {
 	godotenv.Load()
 
-	config.ConnectDB()
+	db := config.ConnectDB()
 
 	host, ok_host := os.LookupEnv("HOST")
 	port, ok_port := os.LookupEnv("PORT")
-
 	if ok_host && ok_port {
 
-		if err := http.ListenAndServe(host+":"+port, routes.Init()); err != nil {
+		if err := http.ListenAndServe(host+":"+port, routes.Init(db)); err != nil {
 			log.Fatal(err)
+		} else {
+			fmt.Printf("Application runs on port %s\n", port)
 		}
 	} else {
 		log.Fatal("HOST or PORT not set in .env")
 	}
+
+	defer db.Close()
 }
