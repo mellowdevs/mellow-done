@@ -8,6 +8,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var DB *sql.DB
+
 func ConnectDB() *sql.DB {
 	host, _ := os.LookupEnv("HOST")
 	db_port, _ := os.LookupEnv("DB_PORT")
@@ -30,5 +32,10 @@ func ConnectDB() *sql.DB {
 	if err != nil {
 		panic(err)
 	}
-	return db
+	DB = db
+	return DB
+}
+
+func GetDBInstance() *sql.DB {
+	return DB
 }

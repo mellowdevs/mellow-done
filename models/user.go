@@ -1,12 +1,11 @@
 package models
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -20,37 +19,29 @@ type LoginUser struct {
 	Password string `json:"password"`
 }
 
+type UserResponse struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
 type Credential struct {
 	Username string
+	UserId   string
 	jwt.StandardClaims
 }
 
-func (user *User) EncryptPassword(password string) {
-	if passHash, err := bcrypt.GenerateFromPassword([]byte(password), 12); err != nil {
-		log.Fatal(err)
-	} else {
-		user.Password = string(passHash)
-	}
+func (cred *Credential) AuthenticateLogin(user User) (string, error) {
+	var secret, _ = os.LookupEnv("SECRET_KEY")
+	cred.UserId = user.Id
+	cred.Username = user.Username
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, cred)
 
-}
+	cred.ExpiresAt = time.Now().Add(time.Hour * 24).Unix()
 
-func (user *User) AuthenticateUser(id string) (string, error) {
-	var secretKey, _ = os.LookupEnv("SECRET_KEY")
-	expirationTime := time.Now().Add(time.Hour * 120)
-	claims := &Credential{
-		Username: user.Username,
-		StandardClaims: jwt.StandardClaims{
-			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-
-	// Declare the token with the algorithm used for signing, and the claims
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	if tokenString, err := token.SignedString([]byte(secretKey)); err != nil {
+	tokenStr, err := token.SignedString([]byte(secret))
+	if err != nil {
+		fmt.Println(err)
 		return "", err
-	} else {
-		return tokenString, nil
 	}
+	return tokenStr, err
 }

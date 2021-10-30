@@ -1,34 +1,70 @@
 package routes
 
 import (
-	"database/sql"
-	"net/http"
-
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	"github.com/mellowdevs/mellow-done/controllers/auth"
+	"github.com/mellowdevs/mellow-done/controllers/list"
+	"github.com/mellowdevs/mellow-done/controllers/task"
+	"github.com/mellowdevs/mellow-done/middleware"
 )
 
-func Init(db *sql.DB) *mux.Router {
-	route := mux.NewRouter()
-	auth_route := "/api/v1/auth"
+func InitRouter(router *gin.Engine) {
+	authRoutes := router.Group("api/v1/auth")
+	{
+		authRoutes.POST("/login", func(c *gin.Context) {
+			auth.Login(c)
+		})
+		authRoutes.POST("/register", func(c *gin.Context) {
+			auth.Register(c)
+		})
+		authRoutes.GET("", func(c *gin.Context) {
+			auth.GetAuthenticatedUser(c)
+		})
+		authRoutes.GET("/logout", func(c *gin.Context) {
+			auth.Logout(c)
+		})
 
-	route.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	})
+	}
 
-	route.HandleFunc(auth_route+"/register", func(rw http.ResponseWriter, r *http.Request) {
-		auth.Register(rw, r, db)
-	}).Methods("POST")
-	route.HandleFunc(auth_route+"/login", func(rw http.ResponseWriter, r *http.Request) {
-		auth.Login(rw, r, db)
-	}).Methods("POST")
-	route.HandleFunc(auth_route, func(rw http.ResponseWriter, r *http.Request) {
-		auth.GetUser(rw, r)
-	}).Methods("GET")
-	route.HandleFunc(auth_route+"/refresh", func(rw http.ResponseWriter, r *http.Request) {
-		auth.Refresh(rw, r)
-	}).Methods("GET")
-	route.HandleFunc(auth_route+"/logout", func(rw http.ResponseWriter, r *http.Request) {
-		auth.Logout(rw, r)
-	}).Methods("GET")
-	return route
+	listRoutes := router.Group("api/v1/list")
+	{
+		listRoutes.POST("", middleware.AuthMiddleware(), func(c *gin.Context) {
+			list.CreateList(c)
+		})
+		listRoutes.PUT("", middleware.AuthMiddleware(), func(c *gin.Context) {
+			list.UpdateList(c)
+		})
+		listRoutes.DELETE("", middleware.AuthMiddleware(), func(c *gin.Context) {
+			list.DeleteList(c)
+		})
+		listRoutes.GET("/id", middleware.AuthMiddleware(), func(c *gin.Context) {
+			list.GetList(c)
+		})
+		listRoutes.GET("", middleware.AuthMiddleware(), func(c *gin.Context) {
+			list.GetAllLists(c)
+		})
+	}
+
+	taskRoutes := router.Group("api/v1/task")
+	{
+		taskRoutes.POST("", middleware.AuthMiddleware(), func(c *gin.Context) {
+			task.CreateTask(c)
+		})
+		taskRoutes.PUT("", middleware.AuthMiddleware(), func(c *gin.Context) {
+			task.UpdateTask(c)
+		})
+		taskRoutes.DELETE("", middleware.AuthMiddleware(), func(c *gin.Context) {
+			task.DeleteTask(c)
+		})
+		taskRoutes.GET("/id", middleware.AuthMiddleware(), func(c *gin.Context) {
+			task.GetTaskById(c)
+		})
+		taskRoutes.GET("/listId", middleware.AuthMiddleware(), func(c *gin.Context) {
+			task.GetTasksByListId(c)
+		})
+		taskRoutes.GET("", middleware.AuthMiddleware(), func(c *gin.Context) {
+			task.GetAllTasks(c)
+		})
+
+	}
 }
