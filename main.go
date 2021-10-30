@@ -1,10 +1,11 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"fmt"
 	"os"
 
+	helmet "github.com/danielkov/gin-helmet"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/mellowdevs/mellow-done/config"
 	"github.com/mellowdevs/mellow-done/routes"
@@ -13,17 +14,22 @@ import (
 func main() {
 	godotenv.Load()
 
-	config.ConnectDB()
+	db := config.ConnectDB()
 
 	host, ok_host := os.LookupEnv("HOST")
 	port, ok_port := os.LookupEnv("PORT")
-
 	if ok_host && ok_port {
 
-		if err := http.ListenAndServe(host+":"+port, routes.Init()); err != nil {
-			log.Fatal(err)
-		}
+		router := gin.Default()
+		router.Use(helmet.Default())
+
+		routes.InitRouter(router)
+
+		router.Run(host + ":" + port)
+
 	} else {
-		log.Fatal("HOST or PORT not set in .env")
+		fmt.Printf("Application runs on port %s\n", port)
 	}
+
+	defer db.Close()
 }
