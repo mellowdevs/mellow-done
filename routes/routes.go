@@ -3,12 +3,19 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mellowdevs/mellow-done/controllers/auth"
+	"github.com/mellowdevs/mellow-done/controllers/homepage"
 	"github.com/mellowdevs/mellow-done/controllers/list"
 	"github.com/mellowdevs/mellow-done/controllers/task"
 	"github.com/mellowdevs/mellow-done/middleware"
 )
 
 func InitRouter(router *gin.Engine) {
+	homepageRoutes := router.Group("")
+	{
+		homepageRoutes.GET("", func(c *gin.Context) {
+			homepage.GetHomepage(c)
+		})
+	}
 	authRoutes := router.Group("api/v1/auth")
 	{
 		authRoutes.POST("/login", func(c *gin.Context) {
