@@ -11,7 +11,7 @@ import (
 var DB *sql.DB
 
 func ConnectDB() *sql.DB {
-	host, _ := os.LookupEnv("HOST")
+	host, _ := os.LookupEnv("DB_HOST")
 	db_port, _ := os.LookupEnv("DB_PORT")
 	user, _ := os.LookupEnv("DB_USER")
 	password, _ := os.LookupEnv("DB_PASSWORD")
