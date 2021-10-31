@@ -7,10 +7,10 @@ import (
 
 func GetHomepage(c *gin.Context) {
 
+
 	c.JSON(200, util.ResponseMessage{
 		Success: true,
 		Message: "Welcome!",
 	})
 	return
-
 }
