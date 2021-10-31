@@ -9,6 +9,12 @@ import (
 )
 
 func InitRouter(router *gin.Engine) {
+	mainRoutes := router.Group("")
+	{
+		mainRoutes.GET("", func(c *gin.Context) {
+
+		})
+	}
 	authRoutes := router.Group("api/v1/auth")
 	{
 		authRoutes.POST("/login", func(c *gin.Context) {
