@@ -11,14 +11,14 @@ import (
 var DB *sql.DB
 
 func ConnectDB() *sql.DB {
-	host, _ := os.LookupEnv("HOST")
+	host, _ := os.LookupEnv("DB_HOST")
 	db_port, _ := os.LookupEnv("DB_PORT")
 	user, _ := os.LookupEnv("DB_USER")
 	password, _ := os.LookupEnv("DB_PASSWORD")
 	dbname, _ := os.LookupEnv("DB_NAME")
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
+		"password=%s dbname=%s sslmode=require",
 		host, db_port, user, password, dbname)
 
 	db, err := sql.Open("postgres", psqlInfo)
