@@ -18,7 +18,7 @@ func ConnectDB() *sql.DB {
 	dbname, _ := os.LookupEnv("DB_NAME")
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
+		"password=%s dbname=%s sslmode=require",
 		host, db_port, user, password, dbname)
 
 	db, err := sql.Open("postgres", psqlInfo)
