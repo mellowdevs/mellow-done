@@ -10,66 +10,67 @@ import (
 )
 
 func InitRouter(router *gin.Engine) {
+
 	homepageRoutes := router.Group("")
 	{
 		homepageRoutes.GET("", func(c *gin.Context) {
 			homepage.GetHomepage(c)
 		})
 	}
-	authRoutes := router.Group("api/v1/auth")
+	authRoutes := router.Group("")
 	{
-		authRoutes.POST("/login", func(c *gin.Context) {
+		authRoutes.POST("api/v1/auth/login", func(c *gin.Context) {
 			auth.Login(c)
 		})
-		authRoutes.POST("/register", func(c *gin.Context) {
+		authRoutes.POST("api/v1/auth/register", func(c *gin.Context) {
 			auth.Register(c)
 		})
-		authRoutes.GET("", func(c *gin.Context) {
+		authRoutes.GET("api/v1/auth", func(c *gin.Context) {
 			auth.GetAuthenticatedUser(c)
 		})
-		authRoutes.GET("/logout", func(c *gin.Context) {
+		authRoutes.GET("api/v1/auth/logout", func(c *gin.Context) {
 			auth.Logout(c)
 		})
 
 	}
 
-	listRoutes := router.Group("api/v1/list")
+	listRoutes := router.Group("")
 	{
-		listRoutes.POST("", middleware.AuthMiddleware(), func(c *gin.Context) {
+		listRoutes.POST("api/v1/list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			list.CreateList(c)
 		})
-		listRoutes.PUT("", middleware.AuthMiddleware(), func(c *gin.Context) {
+		listRoutes.PUT("api/v1/list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			list.UpdateList(c)
 		})
-		listRoutes.DELETE("", middleware.AuthMiddleware(), func(c *gin.Context) {
+		listRoutes.DELETE("api/v1/list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			list.DeleteList(c)
 		})
-		listRoutes.GET("/id", middleware.AuthMiddleware(), func(c *gin.Context) {
+		listRoutes.GET("api/v1/list/id", middleware.AuthMiddleware(), func(c *gin.Context) {
 			list.GetList(c)
 		})
-		listRoutes.GET("", middleware.AuthMiddleware(), func(c *gin.Context) {
+		listRoutes.GET("api/v1/list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			list.GetAllLists(c)
 		})
 	}
 
-	taskRoutes := router.Group("api/v1/task")
+	taskRoutes := router.Group("")
 	{
-		taskRoutes.POST("", middleware.AuthMiddleware(), func(c *gin.Context) {
+		taskRoutes.POST("api/v1/task", middleware.AuthMiddleware(), func(c *gin.Context) {
 			task.CreateTask(c)
 		})
-		taskRoutes.PUT("", middleware.AuthMiddleware(), func(c *gin.Context) {
+		taskRoutes.PUT("api/v1/task", middleware.AuthMiddleware(), func(c *gin.Context) {
 			task.UpdateTask(c)
 		})
-		taskRoutes.DELETE("", middleware.AuthMiddleware(), func(c *gin.Context) {
+		taskRoutes.DELETE("api/v1/task", middleware.AuthMiddleware(), func(c *gin.Context) {
 			task.DeleteTask(c)
 		})
-		taskRoutes.GET("/id", middleware.AuthMiddleware(), func(c *gin.Context) {
+		taskRoutes.GET("api/v1/task/id", middleware.AuthMiddleware(), func(c *gin.Context) {
 			task.GetTaskById(c)
 		})
 		taskRoutes.GET("/listId", middleware.AuthMiddleware(), func(c *gin.Context) {
 			task.GetTasksByListId(c)
 		})
-		taskRoutes.GET("", middleware.AuthMiddleware(), func(c *gin.Context) {
+		taskRoutes.GET("api/v1/task", middleware.AuthMiddleware(), func(c *gin.Context) {
 			task.GetAllTasks(c)
 		})
 
