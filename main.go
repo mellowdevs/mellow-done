@@ -16,7 +16,7 @@ func main() {
 
 	db := config.ConnectDB()
 
-	host, ok_host := os.LookupEnv("HOST")
+	_, ok_host := os.LookupEnv("HOST")
 	port, ok_port := os.LookupEnv("PORT")
 	if ok_host && ok_port {
 
@@ -25,7 +25,7 @@ func main() {
 
 		routes.InitRouter(router)
 
-		router.Run(host + ":" + port)
+		router.Run(":" + port)
 
 	} else {
 		fmt.Printf("Application runs on port %s\n", port)
